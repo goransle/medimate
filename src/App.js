@@ -52,10 +52,10 @@ class App extends Component {
 			}
 		}, interval);
 	}
-	hold = (time, nextStep) =>{
-		this.setState({animating: true})
+	hold = (time, nextStep) => {
+		this.setState({ animating: true })
 		setTimeout(() => {
-			this.setState({animating: false, step: nextStep})
+			this.setState({ animating: false, step: nextStep })
 		}, time * 1000);
 	}
 	start = () => {
@@ -68,18 +68,19 @@ class App extends Component {
 		}, 10);
 	}
 	run = () => {
-		if(!this.state.animating) {
-			if (this.state.step === "grow") {
+		let { animating, step, settings } = this.state;
+		if (!animating) {
+			if (step === "grow") {
 				this.grow()
 			}
-			if (this.state.step === "holdIn") {
-				this.hold(this.state.settings.holdIn, "shrink")
+			if (step === "holdIn") {
+				this.hold(settings.holdIn, "shrink")
 			}
-			if (this.state.step === "shrink") {
+			if (step === "shrink") {
 				this.shrink()
 			}
-			if (this.state.step === "holdOut") {
-				this.hold(this.state.settings.holdOut, "grow")
+			if (step === "holdOut") {
+				this.hold(settings.holdOut, "grow")
 			}
 		}
 	}
@@ -87,19 +88,30 @@ class App extends Component {
 		return number + "%"
 	}
 
-	updateSettings = (e) =>{
-		this.setState({settings: e})
+	updateSettings = (e) => {
+		this.setState({ settings: e })
 	}
 	render() {
-		var date = new Date(Date.now() - this.state.start)
 		return (
 			<div className="App">
-				<Settings updateSettings={this.updateSettings}/>
+				<Settings updateSettings={this.updateSettings} />
 				<Circle onClick={this.start} radius={this.addPercentage(this.state.radius)} />
-				<h1>{date.getMinutes() + "m " + date.getSeconds(2) + "s"}</h1>
+				{this.state.started &&
+					<Timer start={this.state.start}/>
+				}
 			</div>
 		);
 	}
 }
+
+function Timer(props) {
+	var date = new Date(Date.now() - props.start)
+	return (
+		<div className="time">
+			{date.getMinutes() + "m " + date.getSeconds(2) + "s"}
+		</div>
+	)
+}
+
 
 export default App;
